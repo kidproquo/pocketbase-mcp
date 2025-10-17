@@ -20,6 +20,14 @@ RUN npm run build
 # Use a lightweight Node.js image for the production build
 FROM node:20-alpine
 
+RUN apk add --no-cache python3 py3-pip build-base uv
+
+# Link python3 to python for convenience
+RUN ln -sf python3 /usr/bin/python
+
+
+RUN uv tool install mcp-proxy
+
 # Set the working directory in the container
 WORKDIR /app
 
@@ -27,11 +35,9 @@ WORKDIR /app
 COPY --from=builder /app/build ./build
 COPY --from=builder /app/node_modules ./node_modules
 
-# Expose the port on which the server will run (assume 3000, replace if necessary)
-EXPOSE 3000
+COPY named-server-config.json ./.
 
-# Set the environment variables for the PocketBase connection
-ENV POCKETBASE_URL=http://127.0.0.1:8090
+EXPOSE 32009
 
 # Start the server
-CMD ["node", "build/index.js"]
+CMD ["uvx", "mcp-proxy", "--port=32009", "--host=0.0.0.0", "--named-server-config", "./named-server-config.json"]

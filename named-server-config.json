@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "pocketbase-server": {
+      "command": "node",
+      "args": [
+        "/app/build/index.js"
+      ],
+      "env": {
+        "POCKETBASE_URL": "${POCKETBASE_URL}"
+      },
+      "disabled": false,
+      "autoApprove": [
+        "create_record",
+        "create_collection"
+      ]
+    }
+  }
+}
